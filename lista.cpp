@@ -1,7 +1,6 @@
 // Copyright [2020] <Leonardo Rocha...>
 #ifndef STRUCTURES_ARRAY_LIST_H
 #define STRUCTURES_ARRAY_LIST_H
-
 #include <cstdint>  // std::size t
 #include <stdexcept>  // C++ Exceptions
 
@@ -219,9 +218,7 @@ template<typename T>
 void structures::ArrayList<T>::insert_sorted(const T& data) {
     if (full()) throw std::out_of_range("lista cheia");
     int cont = size_ - 1;
-    // while ((contents[cont] > data) && cont >= 0) {
-    while (cont >= 0 && (contents[cont] > data)) {  // !!!
-        // no AND, avalia o índice primeiro
+    while (cont >= 0 && (contents[cont] > data)) {  
         contents[cont + 1] = contents[cont];
         cont--;
     }
