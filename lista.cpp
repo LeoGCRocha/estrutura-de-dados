@@ -26,7 +26,7 @@ class ArrayList {
     //! adicionando na posição
     void insert(const T& data, std::size_t index);
     //! adicionando em posição aleatoria
-    void insert_sorted(const T& data);  // CONTINUAR DAQUI
+    void insert_sorted(const T& data);
     //! removendo em uma posição
     T pop(std::size_t index);
     //! removendo do inicio
@@ -64,161 +64,181 @@ class ArrayList {
     T* contents;
     std::size_t size_;
     std::size_t max_size_;
-    int end_;
 
     static const auto DEFAULT_MAX = 10u;
 };
 
 }  // namespace structures
 #endif
-// Construtor sem argumentos
+
+// Construtor
 template<typename T>
 structures::ArrayList<T>::ArrayList() {
     ArrayList(DEFAULT_MAX);
 }
-// Construtor com argumentos
-template<typename T>
-structures::ArrayList<T>::ArrayList(std::size_t max) {
-    max_size_ = max;
-    contents = new T[max_size_];
-    size_ = 0;
-    end_ = -1;
-}
 // Destrutor
 template<typename T>
 structures::ArrayList<T>::~ArrayList() {
-  delete [] contents;
+    delete [] contents;
 }
-// Metodo size
+// Construtor com atributos
+template<typename T>
+structures::ArrayList<T>::ArrayList(std::size_t max) {
+    size_ = 0;
+    max_size_ = max;
+    contents = new T[max_size_];
+}
+// Metodo limpar lista
+template<typename T>
+void structures::ArrayList<T>::clear() {
+    size_ = 0;
+}
+// Verificar se lista esta cheia
+template<typename T>
+bool structures::ArrayList<T>::full() const {
+    return size_ == max_size_;
+}
+// Verificar se lista esta vazia
+template<typename T>
+bool structures::ArrayList<T>::empty() const {
+    return size_ == 0;
+}
+// Retorna tamanho atual da lista
 template<typename T>
 std::size_t structures::ArrayList<T>::size() const {
     return size_;
 }
-// Metodo :maxSize():
+// Retorna o tamanho maximo da lista
 template<typename T>
 std::size_t structures::ArrayList<T>::max_size() const {
     return max_size_;
 }
-// Metodo void:clear():
-template<typename T>
-void structures::ArrayList<T>::clear() {
-    end_ = -1;
-    size_ = 0;
-}
-// Metodo bool:empty()
-template<typename T>
-bool structures::ArrayList<T>::empty() const {
-  return (size_ == 0);
-}
-// Metodo bool:full()
-template<typename T>
-bool structures::ArrayList<T>::full() const {
-  return (size_ == max_size_);
-}
-// Metodo push_back
-template<typename T>
-void structures::ArrayList<T>::push_back(const T& data) {
-    if (full()) throw std::out_of_range("lista cheia");
-    move_front(0);
-    contents[0] = data;
-    size_++;
-}
-// Metodo push_front
-template<typename T>
-void structures::ArrayList<T>::push_front(const T& data) {
-    if (full()) throw std::out_of_range("lista cheia");
-    contents[end_++] = data;
-    size_++;
-}
-// Insert em uma posição
-template<typename T>
-void structures::ArrayList<T>::insert(const T& data, std::size_t index) {
-     if (full()) throw std::out_of_range("lista cheia");
-     if (index<0 || index>end_) throw std::out_of_range("posicao invalida");
-     move_front(index);
-     contents[index] = data;
-     size_++;
-}
-// Deslocando p/ frente
-template<typename T>
-void structures::ArrayList<T>::move_front(std::size_t index) {
-    if (index<0 || index>end_) throw std::out_of_range("posição invalida");
-    for (int i = end_+1; i > index; i--) contents[i] = contents[i-1];
-    end_++;
-}
-// Deslocando p/ tras
-template<typename T>
-void structures::ArrayList<T>::move_back(std::size_t index) {
-    if (index<0 || index>end_) throw std::out_of_range("posição invalida");
-    for (int i = index; i < end_; i++) contents[index] = contents[index+1];
-    end_--;
-}
-// Removendo do inicio
-template<typename T>
-T structures::ArrayList<T>::pop_back() {
-    if (empty()) throw std::out_of_range("lista vazia");
-    T aux = contents[0];
-    move_back(0);
-    size_--;
-    return aux;
-}
-// Removendo do fim
-template<typename T>
-T structures::ArrayList<T>::pop_front() {
-    if (empty()) throw std::out_of_range("lista vazia");
-    end_--;
-    size_--;
-    return contents[end_+1];
-}
-// Remover dado
-template<typename T>
-void structures::ArrayList<T>::remove(const T& data) {
-    pop(find(data));
-}
-// Removendo na posição
-template<typename T>
-T structures::ArrayList<T>::pop(std::size_t index) {
-    if (empty()) throw std::out_of_range("lista vazia");
-    if (index<0 || index>end_) throw std::out_of_range("posicao invalida");
-    T aux = contents[index];
-    move_back(index);
-    size_--;
-    return aux;
-}
-// Procurando dado
-template<typename T>
-std::size_t structures::ArrayList<T>::find(const T& data) const {
-    if (empty()) throw std::out_of_range("lista vazia");
-    for (int i = 0; i < end_; i++) {
-        if (contents[i] == data) return i;
-    }
-    return -1;
-}
-// Contem dado
-template<typename T>
-bool structures::ArrayList<T>::contains(const T& data) const {
-    return find(data) != -1;
-}
-// Metdo At
+// At, Operator, Const at, Const operator
 template<typename T>
 T& structures::ArrayList<T>::at(std::size_t index) {
-    if (empty()) if (empty()) throw std::out_of_range("lista vazia");
-    if (index<0 || index>end_) throw std::out_of_range("posicao invalida");
-    return contents[index];
+    if (empty()) throw std::out_of_range("lista vazia");
+    if (index >= size_) {
+        throw std::out_of_range("posicao invalida");
+    } else {
+        return contents[index];
+    }
 }
-// Metodo Operator
+template<typename T>
+const T& structures::ArrayList<T>::at(std::size_t index) const {
+    if (empty()) throw std::out_of_range("lista vazia");
+    if (index >= size_) {
+        throw std::out_of_range("posicao invalida");
+    } else {
+        return contents[index];
+    }
+}
 template<typename T>
 T& structures::ArrayList<T>::operator[](std::size_t index) {
     return contents[index];
+}
+template<typename T>
+const T& structures::ArrayList<T>::operator[](std::size_t index) const {
+    return contents[index];
+}
+// Find
+template<typename T>
+std::size_t structures::ArrayList<T>::find(const T& data) const {
+    for (int i = 0; i < size_; i++) {
+        if (contents[i] == data) {
+            return i;
+        }
+    }
+    return size_;
+}
+// Contains
+template<typename T>
+bool structures::ArrayList<T>::contains(const T& data) const {
+    if (empty()) return false;  // !!!
+    for (int i = 0; i < size_; i++) {
+        if (data == contents[i]) return true;
+    }
+    return false;
+}
+// Pop front
+template<typename T>
+T structures::ArrayList<T>::pop_back() {
+    if (empty()) throw std::out_of_range("lista vazia");
+    return contents[--size_];
+}
+//  Pop X
+template<typename T>
+T structures::ArrayList<T>::pop(std::size_t index) {
+    if (empty()) throw std::out_of_range("lista vazia");
+    if (index >= size_) {
+        throw std::out_of_range("posicao invalida");
+    }
+    T aux = contents[index];  // estava antes do if !!!
+    for (int i = index; i < size_ - 1; i++) {  // estava 'i--'
+        contents[i] = contents[i+1];
+    }
+    size_--;
+    return aux;
+}
+// Pop front
+template<typename T>
+T structures::ArrayList<T>::pop_front() {
+    if (empty()) throw std::out_of_range("lista vazia");
+    return pop(0);
+}
+// Push front
+template<typename T>
+void structures::ArrayList<T>::push_front(const T& data) {
+    if (full()) throw std::out_of_range("lista cheia");
+    for (int i = size_; i > 0; i--) {  // estava 'size_ - 1' !!!
+        contents[i] = contents[i-1];
+    }
+    contents[0] = data;
+    size_++;
+}
+// Push back
+template<typename T>
+void structures::ArrayList<T>::push_back(const T& data) {
+    if (full()) throw std::out_of_range("lista cheia");
+    contents[size_++] = data;
+}
+// Insert
+template<typename T>
+void structures::ArrayList<T>::insert(const T& data, std::size_t index) {
+    if (full()) throw std::out_of_range("lista cheia");
+    if (index > size_) {
+        throw std::out_of_range("posicao invalida");
+    }
+    for (std::size_t i = size_; i > index; i--) {
+        contents[i] = contents[i-1];
+    }
+    contents[index] = data;
+    size_++;
 }
 // Insert sorted
 template<typename T>
 void structures::ArrayList<T>::insert_sorted(const T& data) {
     if (full()) throw std::out_of_range("lista cheia");
-    for (int i = 0; i < end_; i++) {
-        if (data < contents[i]) {
-            insert(data , i);
-            break;
-        }
+    int cont = size_ - 1;
+    // while ((contents[cont] > data) && cont >= 0) {
+    while (cont >= 0 && (contents[cont] > data)) {  // !!!
+        // no AND, avalia o índice primeiro
+        contents[cont + 1] = contents[cont];
+        cont--;
     }
+    contents[cont + 1] = data;
+    size_++;
+}
+// Removendo um elemento
+template<typename T>
+void structures::ArrayList<T>::remove(const T& data) {
+    if (empty()) {
+        throw std::out_of_range("lista vazia");
+    }
+    if (!contains(data)) return;
+    int i = find(data);
+    int j;
+    for (j = i; j < size_ - 1; j++) {
+        contents[j] = contents[j + 1];
+    }
+    size_--;
 }
